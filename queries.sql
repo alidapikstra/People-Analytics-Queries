@@ -128,7 +128,119 @@ FROM
     employees;
     
 /*
-How many annual contracts with a value higher than or equal to $100,000 have been registered in the salaries table?
+How many anual contracts with a value higher than or equal to $100,000 have been registered in the salaries table?
 */
 select count(*) from salaries where salary >= "100000";
+
+
+/*
+Select all data from the “employees” table, ordering it by “hire date” in descending order.
+*/
+SELECT 
+    *
+FROM
+    employees
+ORDER BY hire_date DESC;
+
+/*
+Write a query that obtains an output whose first column must contain annual salaries higher than 80,000 dollars. The second column, renamed to “emps_with_same_salary”, must show the number of employee contracts signed with this salary.
+*/
+SELECT
+
+    salary, COUNT(emp_no) AS emps_with_same_salary
+
+FROM
+
+    salaries
+
+WHERE
+
+    salary > 80000
+
+GROUP BY salary
+
+ORDER BY salary;
+
+
+/*
+Select all employees whose average salary is higher than $120,000 per annum.
+*/
+SELECT 
+    emp_no, AVG(salary)
+FROM
+    salaries
+GROUP BY emp_no
+HAVING AVG(salary) > 120000
+ORDER BY emp_no;
+
+/*
+Select the employee numbers of all individuals who have signed more than 1 contract after the 1st of January 2000.
+*/
+SELECT
+
+    emp_no
+
+FROM
+
+    dept_emp
+
+WHERE
+
+    from_date > '2000-01-01'
+
+GROUP BY emp_no
+
+HAVING COUNT(from_date) > 1
+
+ORDER BY emp_no;
+
+/*
+Select the first 100 rows from the ‘dept_emp’ table. 
+*/
+SELECT 
+    *
+FROM
+    dept_emp
+LIMIT 100;
+
+/*
+What is the total amount of money spent on salaries for all contracts starting after the 1st of January 1997?
+*/
+SELECT 
+    SUM(salary)
+FROM
+    salaries
+WHERE
+    from_date > '1997-01-01';
+    
+/*
+How many departments are there in the “employees” database? Use the ‘dept_emp’ table to answer the question.
+*/
+SELECT 
+    COUNT(DISTINCT dept_no)
+FROM
+    dept_emp;
+
+/*
+What is the average annual salary paid to employees who started after the 1st of January 1997?
+*/
+SELECT 
+    AVG(salary)
+FROM
+    salaries
+WHERE
+    from_date > '1997-01-01';
+    
+    /*
+    Round the average amount of money spent on salaries for all contracts that started after the 1st of January 1997 to a precision of cents.
+    */
+    SELECT 
+    ROUND(AVG(salary), 2)
+FROM
+    salaries
+WHERE
+    from_date > '1997-01-01';
+    
+
+    
 

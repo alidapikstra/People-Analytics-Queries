@@ -7,7 +7,7 @@ select dept_no from departments;
 /*
 Select all data from the “departments” table.
 */
-ELECT 
+SELECT 
     *
 FROM
     departments;
@@ -18,12 +18,12 @@ Select all people from the “employees” table whose first name is “Elvis”
 select * from employees where first_name = "Elvis";
 
 /*
-Retrieve a list with all female employees whose first name is Kellie
+Using AND - Retrieve a list with all female employees whose first name is Kellie
 */
 select * from employees where first_name = "Kellie" and gender = "F";
 
 /*
-Retrieve a list with all employees whose first name is either Kellie or Aruna
+Using OR - Retrieve a list with all employees whose first name is either Kellie or Aruna
 */
 SELECT 
     *
@@ -44,7 +44,7 @@ Use the IN operator to select all individuals from the “employees” table, wh
 select * from employees where first_name in ("Denis", "Elvis");
 
 /*
-Extract all records from the ‘employees’ table, aside from those with employees named John, Mark, or Jacob.
+Using NOT IN - Extract all records from the ‘employees’ table, aside from those with employees named John, Mark, or Jacob.
 */
 select * from employees where first_name not in ("John", "Mark", "Jacob");
 
@@ -54,42 +54,42 @@ Working with the “employees” table, use the LIKE operator to select the data
 select * from employees where first_name Like ("Mar%");
 
 /*
-Retrieve a list with all employees who have been hired in the year 2000.
+Using LIKE - Retrieve a list with all employees who have been hired in the year 2000.
 */
 select * from employees where hire_date like ("%2000%");
 
 /*
-Retrieve a list with all employees whose employee number is written with 5 characters, and starts with “1000”. 
+Using LIKE - Retrieve a list with all employees whose employee number is written with 5 characters, and starts with “1000”. 
 */
 select * from employees where emp_no like ("1000_");
 
 /*
-Extract all individuals from the ‘employees’ table whose first name contains “Jack”.
+Using LIKE - Extract all individuals from the ‘employees’ table whose first name contains “Jack”.
 */
 select * from employees where first_name like ("%Jack%");
 
 /*
-names of employees that do not contain “Jack”.
+Using NOT LIKE - names of employees that do not contain “Jack”.
 */
 select * from employees where first_name not like ("%Jack%");
 
 /*
-Select all the information from the “salaries” table regarding contracts from 66,000 to 70,000 dollars per year.
+Using BETWEEN AND - Select all the information from the “salaries” table regarding contracts from 66,000 to 70,000 dollars per year.
 */
 select * from salaries where salary between "66000" and "70000";
 
 /*
-Retrieve a list with all individuals whose employee number is not between ‘10004’ and ‘10012’.
+Using NOT BETWEEN AND - Retrieve a list with all individuals whose employee number is not between ‘10004’ and ‘10012’.
 */
 select * from employees where emp_no not between "10004" and "10012";
 
 /*
-Select the names of all departments with numbers between ‘d003’ and ‘d006’.
+Using BETWEEN AND - Select the names of all departments with numbers between ‘d003’ and ‘d006’.
 */
 select * from departments where dept_no between "d003" and "d006";
 
 /*
-Select the names of all departments whose department number value is not null.
+Using IS NOT NULL - Select the names of all departments whose department number value is not null.
 */
 SELECT 
     dept_name
@@ -99,7 +99,7 @@ WHERE
     dept_no IS NOT NULL;
     
 /*
-Retrieve a list with data about all female employees who were hired in the year 2000 or after.
+Using AND - Retrieve a list with data about all female employees who were hired in the year 2000 or after.
 */
 SELECT 
     *
@@ -130,7 +130,12 @@ FROM
 /*
 How many anual contracts with a value higher than or equal to $100,000 have been registered in the salaries table?
 */
-select count(*) from salaries where salary >= "100000";
+SELECT 
+    COUNT(*)
+FROM
+    salaries
+WHERE
+    salary >= '100000';
 
 
 /*
@@ -143,7 +148,7 @@ FROM
 ORDER BY hire_date DESC;
 
 /*
-Write a query that obtains an output whose first column must contain annual salaries higher than 80,000 dollars. The second column, renamed to “emps_with_same_salary”, must show the number of employee contracts signed with this salary.
+Applying Alias - Write a query that obtains an output whose first column must contain annual salaries higher than 80,000 dollars. The second column, renamed to “emps_with_same_salary”, must show the number of employee contracts signed with this salary.
 */
 SELECT
 
@@ -163,7 +168,7 @@ ORDER BY salary;
 
 
 /*
-Select all employees whose average salary is higher than $120,000 per annum.
+Applying GROUP BY, HAVING AVG - Select all employees whose average salary is higher than $120,000 per annum.
 */
 SELECT 
     emp_no, AVG(salary)
@@ -174,7 +179,7 @@ HAVING AVG(salary) > 120000
 ORDER BY emp_no;
 
 /*
-Select the employee numbers of all individuals who have signed more than 1 contract after the 1st of January 2000.
+Applying GROUP BY, HAVING - Select the employee numbers of all individuals who have signed more than 1 contract after the 1st of January 2000.
 */
 SELECT
 
@@ -195,7 +200,7 @@ HAVING COUNT(from_date) > 1
 ORDER BY emp_no;
 
 /*
-Select the first 100 rows from the ‘dept_emp’ table. 
+Applying LIMIT - Select the first 100 rows from the ‘dept_emp’ table. 
 */
 SELECT 
     *
@@ -204,7 +209,7 @@ FROM
 LIMIT 100;
 
 /*
-What is the total amount of money spent on salaries for all contracts starting after the 1st of January 1997?
+Applying SUM - What is the total amount of money spent on salaries for all contracts starting after the 1st of January 1997?
 */
 SELECT 
     SUM(salary)
@@ -214,7 +219,7 @@ WHERE
     from_date > '1997-01-01';
     
 /*
-How many departments are there in the “employees” database? Use the ‘dept_emp’ table to answer the question.
+Applying DISTINCT - How many departments are there in the “employees” database? Use the ‘dept_emp’ table to answer the question.
 */
 SELECT 
     COUNT(DISTINCT dept_no)
@@ -231,15 +236,101 @@ FROM
 WHERE
     from_date > '1997-01-01';
     
-    /*
-    Round the average amount of money spent on salaries for all contracts that started after the 1st of January 1997 to a precision of cents.
-    */
+/*
+Round the average amount of money spent on salaries for all contracts that started after the 1st of January 1997 to a precision of cents.
+*/
     SELECT 
     ROUND(AVG(salary), 2)
 FROM
     salaries
 WHERE
     from_date > '1997-01-01';
+    
+/*
+Functionality of INNER JOIN - Extract a list containing information about all managers’ employee number, first and last name, department number, and hire date
+*/
+SELECT 
+    e.emp_no, e.first_name, e.last_name, dm.dept_no, e.hire_date
+FROM
+    employees e
+        JOIN
+    dept_manager dm ON e.emp_no = dm.emp_no;
+    
+/*
+The Functionality of LEFT JOIN - Join the 'employees' and the 'dept_manager' tables to return a subset of all the employees whose last name is Markovitch. See if the output contains a manager with that name.  
+*/
+SELECT
+
+    e.emp_no,
+
+    e.first_name,
+
+    e.last_name,
+
+    dm.dept_no,
+
+    dm.from_date
+
+FROM
+
+    employees e
+
+        LEFT JOIN
+
+    dept_manager dm ON e.emp_no = dm.emp_no
+
+WHERE
+
+    e.last_name = 'Markovitch'
+
+ORDER BY dm.dept_no DESC, e.emp_no;
+
+/*
+Using JOIN and WHERE Together - Select the first and last name, the hire date, and the job title of all employees whose first name is “Margareta” and have the last name “Markovitch”.
+*/
+SELECT
+
+    e.first_name, e.last_name, e.hire_date, t.title
+
+FROM
+
+    employees e
+
+        JOIN
+
+    titles t ON e.emp_no = t.emp_no
+
+WHERE
+
+    first_name = 'Margareta'
+
+        AND last_name = 'Markovitch'
+
+ORDER BY e.emp_no
+
+;   
+
+/*
+The Functionality of CROSS JOIN - Use a CROSS JOIN to return a list with all possible combinations between managers from the dept_manager table and department number 9.
+*/
+SELECT
+
+    dm.*, d.*
+
+FROM
+
+    departments d
+
+        CROSS JOIN
+
+    dept_manager dm
+
+WHERE
+
+    d.dept_no = 'd009'
+
+ORDER BY d.dept_name;
+
     
 
     

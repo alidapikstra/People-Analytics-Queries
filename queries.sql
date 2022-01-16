@@ -331,7 +331,189 @@ WHERE
 
 ORDER BY d.dept_name;
 
-    
+ /* 
+ JOIN More than Two Tables - Select all managers’ first and last name, hire date, job title, start date, and department name.
+ */
+SELECT
 
-    
+    e.first_name,
 
+    e.last_name,
+
+    e.hire_date,
+
+    t.title,
+
+    m.from_date,
+
+    d.dept_name
+
+FROM
+
+    employees e
+
+        JOIN
+
+    dept_manager m ON e.emp_no = m.emp_no
+
+        JOIN
+
+    departments d ON m.dept_no = d.dept_no
+
+        JOIN
+
+    titles t ON e.emp_no = t.emp_no
+
+WHERE t.title = 'Manager'
+
+ORDER BY e.emp_no;
+    
+/*
+How many male and how many female managers do we have in the ‘employees’ database?
+*/
+SELECT
+
+    e.gender, COUNT(dm.emp_no)
+
+FROM
+
+    employees e
+
+        JOIN
+
+    dept_manager dm ON e.emp_no = dm.emp_no
+
+GROUP BY gender;
+
+/*
+SQL Subqueries with IN Embedded Inside WHERE - Extract the information about all department managers who were hired between the 1st of January 1990 and the 1st of January 1995.
+*/
+SELECT
+
+    *
+
+FROM
+
+    dept_manager
+
+WHERE
+
+    emp_no IN (SELECT
+
+            emp_no
+
+        FROM
+
+            employees
+
+        WHERE
+
+            hire_date BETWEEN '1990-01-01' AND '1995-01-01');
+            
+/*
+SQL Subqueries with EXISTS-NOT EXISTS Embedded Inside WHERE - Select the entire information for all employees whose job title is “Assistant Engineer”. 
+*/
+SELECT
+
+    *
+
+FROM
+
+    employees e
+
+WHERE
+
+    EXISTS( SELECT
+
+            *
+
+        FROM
+
+            titles t
+
+        WHERE
+
+            t.emp_no = e.emp_no
+
+                AND title = 'Assistant Engineer');
+
+/*
+SQL Subqueries Embedded in SELECT and FRO - Fill emp_manager with data about employees, the number of the department they are working in, and their managers.
+*/
+INSERT INTO emp_manager
+SELECT 
+    u.*
+FROM
+    (SELECT 
+        a.*
+    FROM
+        (SELECT 
+        e.emp_no AS employee_ID,
+            MIN(de.dept_no) AS department_code,
+            (SELECT 
+                    emp_no
+                FROM
+                    dept_manager
+                WHERE
+                    emp_no = 110022) AS manager_ID
+    FROM
+        employees e
+    JOIN dept_emp de ON e.emp_no = de.emp_no
+    WHERE
+        e.emp_no <= 10020
+    GROUP BY e.emp_no
+    ORDER BY e.emp_no) AS a UNION SELECT 
+        b.*
+    FROM
+        (SELECT 
+        e.emp_no AS employee_ID,
+            MIN(de.dept_no) AS department_code,
+            (SELECT 
+                    emp_no
+                FROM
+                    dept_manager
+                WHERE
+                    emp_no = 110039) AS manager_ID
+    FROM
+        employees e
+    JOIN dept_emp de ON e.emp_no = de.emp_no
+    WHERE
+        e.emp_no > 10020
+    GROUP BY e.emp_no
+    ORDER BY e.emp_no
+    LIMIT 20) AS b UNION SELECT 
+        c.*
+    FROM
+        (SELECT 
+        e.emp_no AS employee_ID,
+            MIN(de.dept_no) AS department_code,
+            (SELECT 
+                    emp_no
+                FROM
+                    dept_manager
+                WHERE
+                    emp_no = 110039) AS manager_ID
+    FROM
+        employees e
+    JOIN dept_emp de ON e.emp_no = de.emp_no
+    WHERE
+        e.emp_no = 110022
+    GROUP BY e.emp_no) AS c UNION SELECT 
+        d.*
+    FROM
+        (SELECT 
+        e.emp_no AS employee_ID,
+            MIN(de.dept_no) AS department_code,
+            (SELECT 
+                    emp_no
+                FROM
+                    dept_manager
+                WHERE
+                    emp_no = 110022) AS manager_ID
+    FROM
+        employees e
+    JOIN dept_emp de ON e.emp_no = de.emp_no
+    WHERE
+        e.emp_no = 110039
+    GROUP BY e.emp_no) AS d) as u;
+                

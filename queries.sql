@@ -516,4 +516,57 @@ FROM
     WHERE
         e.emp_no = 110039
     GROUP BY e.emp_no) AS d) as u;
-                
+    
+    /*
+    An Example of Stored Procedures - Create a procedure that will provide the average salary of all employees.
+    */
+
+drop procedure avg_salary;
+
+DELIMITER $$
+
+CREATE PROCEDURE avg_salary()
+
+BEGIN
+
+                SELECT
+
+                                AVG(salary)
+
+                FROM
+
+                                salaries;
+
+END$$
+
+DELIMITER ;
+
+CALL avg_salary;
+
+CALL avg_salary();
+
+CALL employees.avg_salary;
+
+CALL employees.avg_salary();
+
+/*
+create a stored procedure with input parameter - employee salary
+*/
+Use employees;
+
+Drop procedure if exists emp_salary;
+
+Delimiter $$
+Create procedure emp_salary(in p_emp_no integer)
+Begin
+select e.first_name, e.last_name, s.salary, s.from_date, s.to_date
+From employees e
+Join
+Salaries s on e.emp_no = s.emp_no
+Where
+e.emp_no = p_emp_no;
+
+end$$
+
+Delimiter ;
+ 

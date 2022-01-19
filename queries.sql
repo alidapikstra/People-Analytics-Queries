@@ -570,3 +570,214 @@ end$$
 
 Delimiter ;
  
+ /*
+create a stored procedure with output parameter - employee average salary
+*/
+Use employees;
+
+Drop procedure if exists emp_avg_salary_out;
+
+Delimiter $$
+Create procedure emp_avg_salary_out(in p_emp_no integer, out p_avg_salary decimal (10,2))
+Begin
+select AVG(s.salary)
+into p_avg_salary From employees e
+Join
+Salaries s on e.emp_no = s.emp_no
+Where
+e.emp_no = p_emp_no;
+
+end$$
+
+Delimiter ;
+
+/*
+Create Stored Procedures with an Output Parameter - Create a procedure called ‘emp_info’ that uses as parameters the first and the last name of an individual, and returns their employee number.
+*/
+use employees;
+
+Drop procedure if exists emp_info;
+
+Delimiter $$
+Create procedure emp_info(in p_first_name varchar(255), in p_last_name varchar(255), out p_emp_no integer)
+Begin
+select e.emp_no
+into p_emp_no From employees e
+Where
+e.first_name = p_first_name and e.last_name = p_last_name;
+
+end$$
+
+Delimiter ;
+
+/*
+SQL Variables - Create a variable, called ‘v_emp_no’, where you will store the output of the procedure you created in the last exercise.
+Call the same procedure, inserting the values ‘Aruna’ and ‘Journel’ as a first and last name respectively.
+Finally, select the obtained output.
+*/
+SET @v_emp_no = 0;
+
+CALL emp_info('Aruna', 'Journel', @v_emp_no);
+
+SELECT @v_emp_no;
+
+/*
+The Benefit of User-Defined Functions in MySQL - Create a function called ‘emp_info’ that takes for parameters the first and last name of an employee, and returns the salary from the newest contract of that employee.
+*/
+DELIMITER $$
+
+CREATE FUNCTION emp_info(p_first_name varchar(255), p_last_name varchar(255)) RETURNS decimal(10,2)
+
+BEGIN
+
+                DECLARE v_max_from_date date;
+
+    DECLARE v_salary decimal(10,2);
+
+                SELECT
+
+    MAX(from_date)
+
+INTO v_max_from_date FROM
+
+    employees e
+
+        JOIN
+
+    salaries s ON e.emp_no = s.emp_no
+
+WHERE
+
+    e.first_name = p_first_name
+
+        AND e.last_name = p_last_name;
+
+                SELECT
+
+    s.salary
+
+INTO v_salary FROM
+
+    employees e
+
+        JOIN
+
+    salaries s ON e.emp_no = s.emp_no
+
+WHERE
+
+    e.first_name = p_first_name
+
+        AND e.last_name = p_last_name
+
+        AND s.from_date = v_max_from_date;
+
+           
+
+                RETURN v_salary;
+
+END$$
+
+DELIMITER ;
+
+SELECT EMP_INFO('Aruna', 'Journel');
+
+/*
+The SQL CASE Statement - obtain a result set containing the employee number, first name, and last name of all employees with a number higher than 109990. Create a fourth column in the query, indicating whether this employee is also a manager, according to the data provided in the dept_manager table, or a regular employee. 
+*/
+SELECT
+
+    e.emp_no,
+
+    e.first_name,
+
+    e.last_name,
+
+    CASE
+
+        WHEN dm.emp_no IS NOT NULL THEN 'Manager'
+
+        ELSE 'Employee'
+
+    END AS is_manager
+
+FROM
+
+    employees e
+
+        LEFT JOIN
+
+    dept_manager dm ON dm.emp_no = e.emp_no
+
+WHERE
+
+    e.emp_no > 109990;
+    
+/*
+THE SQL CASE Statement - Extract a dataset containing the following information about the managers: employee number, first name, and last name. Add two columns at the end – one showing the difference between the maximum and minimum salary of that employee, and another one saying whether this salary raise was higher than $30,000 or NOT.
+*/
+SELECT
+
+    dm.emp_no,  
+
+    e.first_name,  
+
+    e.last_name,  
+
+    MAX(s.salary) - MIN(s.salary) AS salary_difference,  
+
+    CASE  
+
+        WHEN MAX(s.salary) - MIN(s.salary) > 30000 THEN 'Salary was raised by more then $30,000'  
+
+        ELSE 'Salary was NOT raised by more then $30,000'  
+
+    END AS salary_raise  
+
+FROM  
+
+    dept_manager dm  
+
+        JOIN  
+
+    employees e ON e.emp_no = dm.emp_no  
+
+        JOIN  
+
+    salaries s ON s.emp_no = dm.emp_no  
+
+GROUP BY s.emp_no;  
+
+/*
+THE SQL CASE Statement - Extract the employee number, first name, and last name of the first 100 employees, and add a fourth column, called “current_employee” saying “Is still employed” if the employee is still working in the company, or “Not an employee anymore” if they aren’t.
+*/
+SELECT
+
+    e.emp_no,
+
+    e.first_name,
+
+    e.last_name,
+
+    CASE
+
+        WHEN MAX(de.to_date) > SYSDATE() THEN 'Is still employed'
+
+        ELSE 'Not an employee anymore'
+
+    END AS current_employee
+
+FROM
+
+    employees e
+
+        JOIN
+
+    dept_emp de ON de.emp_no = e.emp_no
+
+GROUP BY de.emp_no
+
+LIMIT 100;
+
+
+

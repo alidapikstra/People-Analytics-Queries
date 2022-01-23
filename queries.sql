@@ -780,7 +780,7 @@ GROUP BY de.emp_no
 LIMIT 100;
 
 /*
-Create a visualization that provides a breakdown between the male and female employees working in the company each year, starting from 1990. 
+Create a visualization in Tableau using data from MySQL that provides a breakdown between the male and female employees working in the company each year, starting from 1990. 
 */
 SELECT 
     YEAR(d.from_date) AS calendar_year,
